@@ -18,7 +18,7 @@ namespace TodoList.Repositories
         {
 
 
-            _path = "C:\\Users\\Owner\\Source\\Repos\\TodoList\\Data\\Data.xml";
+            _path = "data\\Data.xml";
             Doc = XDocument.Load(_path);
             Root = Doc.Root ?? throw new Exception("no root element found!");
             todoList = GetAll();
