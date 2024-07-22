@@ -73,7 +73,6 @@ namespace TodoList.Repositories
         private void Save(List<TodoModel> todo)
         {
             string json = JsonConvert.SerializeObject(todo);
-            MessageBox.Show(json);
             using (StreamWriter sw = new StreamWriter(_location))
             {
                 sw.Write(json);
