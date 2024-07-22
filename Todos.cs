@@ -19,26 +19,23 @@ namespace TodoList
             todos = new List<TodoModel>();
             dataGridView_tasks.DataSource = todos;
             this.repository = repository;
+            PopulateViewWithTodo();
         }
 
-        private void populateViewWithTodo()
+        private void PopulateViewWithTodo()
         {
-            todos.Clear();
-            foreach (var todo in repository.GetAll())
-            {
-                todos.Add(todo);
-            }
+            dataGridView_tasks.DataSource=repository.GetAll();
         }
 
         // populate form from selected row
         private void dataGridView_tasks_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex <= 0)
+            if (e.RowIndex >= 0)
             {
                 var selectedTodo = todos[e.RowIndex];
                 textbox_title.Text = selectedTodo.Title;
                 hopeDatePicker1.Date = selectedTodo.Date.ToDateTime(TimeOnly.MinValue);
-                SetMode(mode);
+                SetMode(Mode.Edit);
             }
         }
 
@@ -56,6 +53,8 @@ namespace TodoList
                 DateTime dt = hopeDatePicker1.Date;
                 DateOnly d = new DateOnly(dt.Year, dt.Month, dt.Day);
                 var newTodo = new TodoModel(repository.getNextId(), textbox_title.Text, d);
+                repository.Add(newTodo);
+                MessageBox.Show("Task added succesfully");
             }
             else if (mode == Mode.Edit)
             {
@@ -63,8 +62,9 @@ namespace TodoList
                 selectedTodo.Title = textbox_title.Text;
                 selectedTodo.Date = DateOnly.FromDateTime(hopeDatePicker1.Date);
                 repository.Update(selectedTodo);
+                MessageBox.Show("Task edited succesfully");
             }
-            populateViewWithTodo();
+            PopulateViewWithTodo();
             SetMode(Mode.Add);
             ClearForm();
         }

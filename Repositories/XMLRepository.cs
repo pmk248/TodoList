@@ -31,6 +31,7 @@ namespace TodoList.Repositories
               new XElement("Date", todo.Date)
               );
             Doc.Root.Add(XMLtoDo);
+            Doc.Save(_path);
             todoList = GetAll();
             return todo;
         }
