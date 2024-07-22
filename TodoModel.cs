@@ -2,17 +2,15 @@
 
 namespace TodoList
 {
-    [XmlRoot("Todo")] 
+    [XmlRoot("Todo")]
     public class TodoModel
     {
-        public TodoModel(string title, DateOnly date)
+        public TodoModel(int id, string title, DateOnly date)
         {
-            Id = counter++;
+            Id = id;
             Title = title;
             Date = date;
         }
-
-        static private int counter = 1; 
         
         [XmlElement("ID")] 
         public int Id { get; set; }
