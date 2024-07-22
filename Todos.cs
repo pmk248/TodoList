@@ -55,7 +55,7 @@ namespace TodoList
             {
                 DateTime dt = hopeDatePicker1.Date;
                 DateOnly d = new DateOnly(dt.Year, dt.Month, dt.Day);
-                var newTodo = new TodoModel(textbox_title.Text, d);
+                var newTodo = new TodoModel(repository.getNextId(), textbox_title.Text, d);
             }
             else if (mode == Mode.Edit)
             {
