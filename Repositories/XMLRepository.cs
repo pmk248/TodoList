@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace TodoList.Repositories
@@ -30,6 +31,7 @@ namespace TodoList.Repositories
               new XElement("Date", todo.Date)
               );
             Doc.Root.Add(XMLtoDo);
+            todoList = GetAll();
             return todo;
         }
 
@@ -40,7 +42,8 @@ namespace TodoList.Repositories
                 if (id == int.Parse(toDo.Element("Id").Value))
                 {
                     toDo.Remove();
-                    break;
+                    todoList = GetAll();
+                    return;
                 }
             }
         }
@@ -50,10 +53,10 @@ namespace TodoList.Repositories
             List<TodoModel> toDos = new List<TodoModel>();
             foreach (XElement toDo in Doc.Root.Elements().ToList())
             {
-                TodoModel task = new TodoModel();
-                task.Title = toDo.Element("Title").Value;
-                task.Id = (int.Parse(toDo.Element("Id").Value));
-                task.XmlDate = toDo.Element("Date").Value;
+                string title = toDo.Element("Title").Value;
+                int id = (int.Parse(toDo.Element("Id").Value));
+                DateOnly date = DateOnly.Parse(toDo.Element("Date").Value);
+                TodoModel task = new TodoModel(id, title, date );
                 toDos.Add(task);
             }
             return toDos;
@@ -66,18 +69,7 @@ namespace TodoList.Repositories
 
         public TodoModel GetById(int id)
         {
-            TodoModel task = new TodoModel();
-            foreach (XElement toDo in Doc.Root.Elements().ToList())
-            {
-                if (id == int.Parse(toDo.Element("Id").Value))
-                {
-                    task.Title = toDo.Element("Title").Value;
-                    task.Id = (int.Parse(toDo.Element("Id").Value));
-                    task.XmlDate = toDo.Element("Date").Value;
-                    break;
-                }
-            }
-            return task;
+            return todoList.Find(t => t.Id == id);
         }
 
         public TodoModel Update(TodoModel todo)
@@ -88,11 +80,12 @@ namespace TodoList.Repositories
                 {
                     XMLtoDo.Element("Title").Value = todo.Title;
                     XMLtoDo.Element("Id").Value = todo.Id.ToString();
-                    XMLtoDo.Element("Date").Value = todo.XmlDate;
+                    XMLtoDo.Element("Date").Value = todo.Date.ToString();
                     break;
                 }
 
             }
+            todoList = GetAll();
             return todo;
         }
     }
