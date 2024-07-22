@@ -88,5 +88,22 @@ namespace TodoList.Repositories
             todoList = GetAll();
             return todo;
         }
+
+        public int getNextId()
+        {
+            if (todoList.Count == 0)
+            {
+                return 1;
+            }
+            int max = todoList[0].Id;
+            foreach(TodoModel element in todoList)
+            {
+                if (element.Id > max)
+                {
+                    max = element.Id;
+                }
+            }
+            return max+1;
+        }
     }
 }
