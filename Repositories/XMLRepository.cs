@@ -51,8 +51,8 @@ namespace TodoList.Repositories
 
         public List<TodoModel> GetAll()
         {
-            List<TodoModel> toDos = new List<TodoModel>();
-            foreach (XElement toDo in Doc.Root.Elements().ToList())
+            List<TodoModel> toDos = [];
+            foreach (XElement toDo in Root.Elements().ToList())
             {
                 string title = toDo.Element("Title").Value;
                 int id = (int.Parse(toDo.Element("Id").Value));
@@ -63,19 +63,18 @@ namespace TodoList.Repositories
             return toDos;
         }
 
-        public List<TodoModel> GetAll(Func<TodoModel, bool> predicate)
-        {
-            throw new NotImplementedException();
-        }
+        public List<TodoModel> GetAll(Func<TodoModel, bool> predicate) => todoList.Where(predicate).ToList();
+        
 
-        public TodoModel GetById(int id)
-        {
-            return todoList.Find(t => t.Id == id);
-        }
+        public TodoModel? GetById(int id) => todoList.Find(t => t.Id == id);
 
         public TodoModel Update(TodoModel todo)
         {
-            foreach (XElement XMLtoDo in Doc.Root.Elements().ToList())
+            int index = todoList.FindIndex(t => t.Id == todo.Id);
+            if (index != -1) {
+                todoList[index] = todo;
+            }
+            foreach (XElement XMLtoDo in Root.Elements().ToList())
             {
                 if (todo.Id == int.Parse(XMLtoDo.Element("Id").Value))
                 {
@@ -84,27 +83,11 @@ namespace TodoList.Repositories
                     XMLtoDo.Element("Date").Value = todo.Date.ToString();
                     break;
                 }
-
             }
             todoList = GetAll();
             return todo;
         }
 
-        public int getNextId()
-        {
-            if (todoList.Count == 0)
-            {
-                return 1;
-            }
-            int max = todoList[0].Id;
-            foreach(TodoModel element in todoList)
-            {
-                if (element.Id > max)
-                {
-                    max = element.Id;
-                }
-            }
-            return max+1;
-        }
+        public int getNextId() =>  todoList.Count == 0 ? 1 : todoList.Max(t => t.Id) + 1;
     }
 }
